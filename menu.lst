@@ -1,0 +1,21 @@
+timeout 10
+
+title Onyx - Desktop
+	root (hd0,0)
+	kernel /boot/kernel.elf
+	module /sys/devmgr.bin
+	module /sys/vfs.bin
+	module /sys/hd.bin
+	module /sys/fatfs.bin HDA1 SYS:
+	module /sys/init.bin
+	module /sys/stdio.bin
+	
+title Onyx - CLI
+	root (hd0,0)
+	kernel /boot/kernel.elf NOGUI
+	module /sys/devmgr.bin
+	module /sys/vfs.bin
+	module /sys/hd.bin
+	module /sys/fatfs.bin HDA1 SYS:
+	module /sys/init.bin
+	module /sys/stdio.bin
