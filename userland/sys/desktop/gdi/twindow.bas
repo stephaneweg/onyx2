@@ -69,18 +69,6 @@ sub TWindowRedraw(elem as TWindow ptr)
         end if
     end if
     return
-    'dim c1 as unsigned integer = &hFF29349C
-    'dim c2 as unsigned integer = &hFF4A55BD
-    'dim c3 as unsigned integer = &hFF00005A
-    
-    'elem->Clear(c1)
-    'elem->DrawRectangle(0,0,elem->_width-1,elem->_height-1,&hFF000000)
-    'elem->DrawRectangle(5,5,elem->_width-6,elem->_height-6,&hFF000000)
-    'if (not elem->Collapsed) then
-    '    elem->DrawLine(5,35,elem->_width-6,35,&hFF000000)
-    '    elem->FillRectangle(6,36,elem->_width-7,elem->_height-7,&hFFFFFFFF)
-    'end if
-    
     
 end sub
 
@@ -110,7 +98,6 @@ function TWindowHandleMouse(elem as TWindow ptr,_mx as integer,_my as integer,_m
             end if            
             if (elem->Parent<>0 and elem->Parent->LastChild<>elem) then
                 elem->BringToFront()
-                if (elem->Owner<>0) then ProcessActivate(elem->Owner)
             end if
         else
             elem->SetPosition(elem->_left + mousex-elem->px,elem->_top+mousey-elem->py)

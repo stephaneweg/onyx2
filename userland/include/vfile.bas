@@ -26,9 +26,11 @@ function VFILE.OPEN(path as unsigned byte ptr,mode as unsigned integer) as unsig
     if (VFS_IPC_NUM = 0) then
         VFS_BIND()
     end if
-    if VFS_IPC_NUM = 0 then return 0
-    
+    if VFS_IPC_NUM = 0 then 
+        return 0
+    end if
     HANDLE = IPC_SEND(VFS_IPC_NUM,3,mode,0,0,cuint(path),0,0,0,@IPC,0)
+    
     if (HANDLE <> 0) and (IPC<>0) then
         return 1
     end if

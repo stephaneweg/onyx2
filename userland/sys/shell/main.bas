@@ -184,6 +184,7 @@ sub DO_COMMAND(cmd as unsigned byte ptr,_stdin as unsigned integer,_stdout as un
                 'stdInPath = GetPath(stdInPath)
             end if
             if (stdOutPath<>0) then
+                
                 while stdOutPath[0]=32:stdOutPath+=1:wend
                 i = strlen(stdOutPath)-1
                 while (i>0) and (stdOutPath[i]=32)
@@ -214,7 +215,6 @@ sub DO_COMMAND(cmd as unsigned byte ptr,_stdin as unsigned integer,_stdout as un
 			if (stdOutPath<>0 and _stdout=0) then 
                 _stdOutFile.OPEN_CREATE(stdOutPath)
                 if (_stdOutFile.HANDLE=0) then
-                    STDIO_WRITE(0,@"Could not open file : "):STDIO_WRITE(0,stdOutPath):STDIO_WRITE_BYTE(0,10)
                     PFree(stdOutPath)
                     if (stdInPath<>0) then PFree(stdInPath)
                     return
@@ -254,22 +254,17 @@ sub DO_COMMAND(cmd as unsigned byte ptr,_stdin as unsigned integer,_stdout as un
             end if
             STDIO_SET_OUT(0)
             STDIO_SET_IN(0)
-            
             'read the output and save it to file
 			if (_astdout<>0 and _stdoutFile.HANDLE<>0) then
-                STDIO_WRITE(0,@"Writing output to "):STDIO_WRITE(0,stdOutPath):STDIO_WRITE_BYTE(0,10)
-                dim n as unsigned integer = 0
+                STDIO_ERR_NUM = 0
                 do
                     var b = STDIO_READ(_astdout)
                     if (STDIO_ERR_NUM) = 0 then
-                    'if (b=0) then exit do
                         _stdoutFile.Write(@b,1)
-                        n+=1
                     else
                         exit do
                     end if
                 loop
-                STDIO_WRITE(0,@" OK "):STDIO_WRITE(0,intToStr(n,10)):STDIO_WRITE(0,@" bytes"):STDIO_WRITE_BYTE(0,10)
                 _stdoutFile.CLOSE()
             end if
             'F_CLOSE(_astdin)
@@ -302,6 +297,6 @@ end function
 function GET_EXEC_PATH(cmd as unsigned byte ptr) as unsigned byte ptr
     dim path as unsigned byte ptr = 0
     'if (FILE_EXISTS(path)) then return path
-    path = strcat( strcat(@"SYS:/BIN/",cmd),@".bin")
+    path = strcat( strcat(@"SYS:/SYS/",cmd),@".bin")
     return path
 end function

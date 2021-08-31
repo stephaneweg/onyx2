@@ -44,7 +44,6 @@ declare sub IPC_Handler(_intno as unsigned integer,_senderproc as unsigned integ
 
 
 sub Main(argc as unsigned integer,argv as unsigned byte ptr ptr)
-    Thread_Enter_Critical()
     ConsoleWrite(@"STDIO starting ...")
     SlabInit()
     var h = IPC_Create_Handler_Name(@"STDIO",@IPC_Handler,1)
@@ -59,7 +58,6 @@ sub Main(argc as unsigned integer,argv as unsigned byte ptr ptr)
     end if
     PIPES_INIT()
     ConsolenewLine()
-    Thread_Exit_Critical()
     Thread_Wait_for_event()
 end sub
 
@@ -163,7 +161,7 @@ function PIPE_TYPE.READ(count as unsigned integer,dst as unsigned byte ptr) as u
 end function
 
 function PIPE_CREATE() as PIPE_TYPE ptr
-    dim pip as PIPE_TYPE ptr = MAlloc(sizeof(PIPE_TYPE ptr))
+    dim pip as PIPE_TYPE ptr = MAlloc(sizeof(PIPE_TYPE))
     pip->constructor()
     return pip
 end function
@@ -221,8 +219,11 @@ sub IPC_Handler(_intno as unsigned integer,_senderproc as unsigned integer,_send
                 if (pip->MAGIC=PIPE_NODE_MAGIC) then
                     dim  buffx as unsigned byte ptr = MapBufferFromCaller(cptr(unsigned byte ptr,_edi),_ecx)
                     if (buffx<>0) then
-                        _eax = pip->READ(_ecx,buffx)
+                        pip->READ(_ecx,buffx)
                         UnmapBuffer(Buffx,_ecx)
+                        if (pip->END_OF_FILE) then
+                            _eax=&hFF
+                        end if
                     end if
                 end if
             end if

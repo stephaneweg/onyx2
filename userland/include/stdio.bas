@@ -36,8 +36,8 @@ function STDIO_CREATE() as unsigned integer
         STDIO_BIND()
         if (STDIO_IPC_NUM=0) then return 0
     end if
-    return IPC_SEND(STDIO_IPC_NUM,1,0,0,0,0,0,0,0,0,0)
-    
+    var result = IPC_SEND(STDIO_IPC_NUM,1,0,0,0,0,0,0,0,0,0)
+    return result
 end function
 
 sub STDIO_DELETE(n as unsigned integer)
@@ -68,13 +68,18 @@ sub STDIO_WRITE(n as unsigned integer,b as unsigned byte ptr)
     IPC_SEND(STDIO_IPC_NUM,3,n,strlen(b),0,cuint(b),0,0,0,0,0)
 end sub
 
+sub STDIO_WRITE_LINE(n as unsigned integer,b as unsigned byte ptr)
+    STDIO_WRITE(n,b)
+    STDIO_WRITE_BYTE(n,10)
+end sub
+
 function STDIO_READ(n as unsigned integer) as unsigned byte 
     if (STDIO_IPC_NUM=0) then
         STDIO_BIND()
         if (STDIO_IPC_NUM=0) then return 0
     end if
     dim b as unsigned byte = 0
-    IPC_SEND(STDIO_IPC_NUM,4,n,1,0,0,cuint(@b),0,0,0,0)
+    STDIO_ERR_NUM = IPC_SEND(STDIO_IPC_NUM,4,n,1,0,0,cuint(@b),0,0,0,0)
     return b
 end function
 

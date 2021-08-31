@@ -41,10 +41,6 @@ sub int35Handler(_intno as unsigned integer,_senderproc as unsigned integer,_sen
             win->OwnerThread = _sender
             win->Title = TmpString
             rootScreen->AddChild(win)
-            
-            ProcessRegister(_senderProc,_sender)
-            ProcessSetTitle(_senderProc,win->Title)
-            ProcessActivate(_senderProc)
             _EAX = cast(unsigned integer,win)
             
         case &h03 'button create

@@ -11,7 +11,6 @@
 #include once "gdi/gdi.bi"
 #include once "drivers/mouse.bi"
 #include once "drivers/keyboard.bi"
-#include once "procman.bi"
 
 dim shared ProcToTerminate as unsigned integer
 dim shared TerminatedProc as unsigned integer
@@ -55,8 +54,6 @@ end sub
 #include once "syscall.bas"
 #include once "drivers/mouse.bas"
 #include once "drivers/keyboard.bas"
-
-#include once "screenmenu.bas"
 declare sub INIT_GUI()
 declare sub GUI_THREAD_LOOP(p as any ptr)
 
@@ -90,7 +87,6 @@ sub INIT_GUI()
     FontManager.Init()
     
 	ScreenInit()
-    ScreenMenu_Init()
     
     'create a separate thread for the gui loop
     Thread_Create(@GUI_THREAD_LOOP)
@@ -106,12 +102,8 @@ sub GUI_THREAD_LOOP(p as any ptr)
         ScreenLoop()
         
         if (ProcToTerminate<>0 or TerminatedProc<>0) then
-            if (TerminatedProc<>0) then
-                ProcessUnregister(TerminatedProc)
-            end if
             
             if (ProcToTerminate<>0) then
-                ProcessUnregister(ProcToTerminate)
                 Process_Kill(ProcToTerminate)
             end if
             'remove the from the gui
@@ -128,14 +120,7 @@ sub GUI_THREAD_LOOP(p as any ptr)
             ProcToTerminate = 0
             
             g = RootScreen->LastChild
-            ProcessActivate(0)
-            while g<>0
-                if (g->Owner<>0 and g->TypeName = TWindowTypeName) then 
-                    ProcessActivate(g->Owner)
-                    exit while
-                end if
-                g=g->PrevChild
-            wend
+            
         end if
     loop
 end sub
