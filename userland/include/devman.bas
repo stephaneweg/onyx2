@@ -1,4 +1,4 @@
-dim shared DEVMAN_IPC_NUM as unsigned integer
+dim shared DEVMAN_IPC_NUM as unsigned integer = 0
 
 sub DEVMAN_BIND()
     'ConsoleWrite(@"Connecting to Device manager ... ")

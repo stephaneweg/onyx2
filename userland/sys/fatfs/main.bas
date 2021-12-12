@@ -111,7 +111,6 @@ sub FATFS_IPC_HANDLER(_intno as unsigned integer,_senderproc as unsigned integer
             end if
          case 3 'read
             _eax = 0
-            'consoleWrite(@"FATFS : READ")
             var handle = cptr(FATFS_FILE ptr,_ebx)
             if (handle<>0) then
                 if (handle->MAGIC = FATFS_MAGIC) then
@@ -125,7 +124,6 @@ sub FATFS_IPC_HANDLER(_intno as unsigned integer,_senderproc as unsigned integer
            
         case 4 'write
             _eax = 0
-            'consoleWrite(@"FATFS : READ")
             var handle = cptr(FATFS_FILE ptr,_ebx)
             if (handle<>0) then
                 if (handle->MAGIC = FATFS_MAGIC) then
@@ -178,6 +176,7 @@ sub FATFS_IPC_HANDLER(_intno as unsigned integer,_senderproc as unsigned integer
             _EAX = FATFS_ListDir(path,attrib,dst,skip,cpt )
             UnMapBuffer(dst,sizeof(VFSDirectoryEntry)*cpt)
         case else
+			 ConsoleWriteLine(@"FATFS WRONG COMMAND")
             _eax = 0
     end select
 		

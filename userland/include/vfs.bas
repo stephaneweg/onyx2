@@ -1,11 +1,10 @@
 #include once "vfs.bi"
 
-dim shared VFS_IPC_NUM as unsigned integer
+dim shared VFS_IPC_NUM as unsigned integer = 0
 
 sub VFS_BIND()
     'ConsoleWrite(@"Connecting to Device manager ... ")
     dim vfsName as unsigned byte ptr = @"VFS"
-    
     'wait until device manager created his mailbox
     VFS_IPC_NUM = IPC_Find(vfsName)
     if VFS_IPC_NUM=0 then

@@ -1,6 +1,6 @@
 
-dim shared STDIO_IPC_NUM as unsigned integer
-dim shared STDIO_ERR_NUM as unsigned integer
+dim shared STDIO_IPC_NUM as unsigned integer = 0
+dim shared STDIO_ERR_NUM as unsigned integer = 0
 
 sub STDIO_BIND()
     STDIO_IPC_NUM = 0

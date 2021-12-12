@@ -158,8 +158,6 @@ function VFSListDir(path as unsigned byte ptr,attrib as unsigned integer,skip as
         VFS_BIND()
     end if
     if VFS_IPC_NUM = 0 then return 0
-    
-    
     return IPC_SEND(VFS_IPC_NUM,4,attrib,count,skip,cuint(path),cuint(dst),0,0,0,0)
     
     return 0

@@ -56,7 +56,6 @@ end sub
 #include once "drivers/keyboard.bas"
 declare sub INIT_GUI()
 declare sub GUI_THREAD_LOOP(p as any ptr)
-
 sub MAIN(argc as unsigned integer,argv as unsigned byte ptr ptr) 
 	SlabInit()
     EV_SIGNAL   = Event_Create()
