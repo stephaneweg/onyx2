@@ -13,6 +13,7 @@ sub int35Handler(_intno as unsigned integer,_senderproc as unsigned integer,_sen
             dim _y as unsigned integer = _EDX and &hFFFF
             
             NewObj(gd,GDIBase)
+            gd->_isShared = 1
             gd->SetSize(_w,_h)
             gd->SetPosition(_x,_y)
             gd->Owner = _senderproc
@@ -342,15 +343,20 @@ sub int35Handler(_intno as unsigned integer,_senderproc as unsigned integer,_sen
             gd->BringToFront()
             
         case  &h20 'get buffer
+            _eax = 0
             if (_ebx=0) then
-                var virt = MapBufferToCaller(ScreenBGR->_buffer,ScreenBGR->_width*ScreenBGR->_height*4)
-                _eax = cuint(virt)
+                'ScreenBGR->Share()
+                if (ScreenBGR->_isShared = 1) and (ScreenBGR->_bufferHandle<>0) then
+                    _eax = ScreenBGR->_bufferHandle
+                end if
                 _ebx = ScreenBGR->_width
                 _ecx =ScreenBGR->_height
             else
                 dim gd as GDIBase ptr = cptr(GDIBase ptr,_EBX)
-                var virt = MapBufferToCaller(gd->_buffer,gd->_width*gd->_height*4)
-                _eax = cuint(virt)
+                gd->Share()
+                if (gd->_isShared = 1) and (gd->_bufferHandle<>0) then
+                    _eax = gd->_bufferHandle
+                end if
                 _ebx = gd->_width
                 _ecx = gd->_height
             end if

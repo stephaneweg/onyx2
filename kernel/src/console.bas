@@ -1,6 +1,15 @@
 #include once "console.bi"
 #include once "stdlib.bi"
+#include once "in_out.bi"
 
+dim shared CONSOLE_MEM     		as unsigned byte ptr
+dim shared consoleWidth         as integer
+dim shared consoleHeight        as integer
+dim shared consoleCursorX       as integer
+dim shared consoleCursorY       as integer
+dim shared consoleLineOffset    as integer
+dim shared consoleBackground    as unsigned byte
+dim shared consoleForeground    as unsigned byte
 sub ConsoleInit()
     CONSOLE_MEM = cptr(unsigned byte ptr,&HB8000)
     
@@ -18,6 +27,14 @@ sub ConsoleInit()
     
     
     ConsoleDrawTitle()
+end sub
+
+function ConsoleGetMem() as unsigned byte ptr
+	return CONSOLE_MEM
+end function
+
+sub ConsoleSetMem(_newaddr as unsigned byte ptr)
+    CONSOLE_MEM = _newaddr
 end sub
 
 sub ConsoleDrawTitle()

@@ -77,7 +77,7 @@ sub MAIN(argc as unsigned integer,argv as unsigned byte ptr ptr)
 end sub
 
 sub INIT_GUI()
-    WinColor = &h224488'&h303d45'
+    WinColor = &h303d45'&h224488'
     WindowSkin = Skin.Create(@"SYS:/RES/WINGS.BMP",1,7,7,32,7)
 	ButtonSkin = Skin.Create(@"SYS:/RES/BUTTON.BMP",3,12,12,12,12)
 	WindowCloseBtn = GImage.LoadFromBitmap(@"SYS:/RES/CLOSEBGS.BMP")

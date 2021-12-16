@@ -4,6 +4,8 @@ sub IPC_INIT()
     LastIPCEndPoint     = 0
     IPCIds              = &hFF 'first id we can create
     Signals             = 0
+	LAST_SHARED_BUFFER	= 0 
+	FIRST_SHARED_BUFFER	= 0
     ConsolePrintOK()
     ConsoleNewLine()
 end sub

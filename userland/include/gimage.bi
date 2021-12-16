@@ -38,7 +38,8 @@ TYPE GImage extends TObject
     _buffer as unsigned integer ptr
     _bufferSize as unsigned integer
     _parent as unsigned integer
-    _handle as unsigned integer
+    _handle         as unsigned integer
+    _bufferHandle   as unsigned integer
     declare constructor()
     declare constructor(parent as unsigned integer,x as unsigned integer,y as unsigned integer,w as unsigned integer,h as unsigned integer)
     declare destructor()

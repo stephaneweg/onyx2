@@ -180,10 +180,10 @@ sub GDIBringToFront(_gd as unsigned integer)
     end asm
 end sub
 
-function GDIGetBuffer(_gdi as unsigned integer,w as unsigned integer ptr,h as unsigned integer ptr) as unsigned integer ptr
+function GDIGetBuffer(_gdi as unsigned integer,w as unsigned integer ptr,h as unsigned integer ptr) as unsigned integer
     dim _w as unsigned integer
     dim _h as unsigned integer
-    dim _result as unsigned integer ptr
+    dim _result as unsigned integer
     asm
         mov eax,&h20
         mov ebx,[_gdi]

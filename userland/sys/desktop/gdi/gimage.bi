@@ -33,11 +33,12 @@ end type
 
 
 TYPE GImage extends TObject
-    _width as unsigned integer
-    _height as unsigned integer
-    _buffer as unsigned integer ptr
-    _bufferSize as unsigned integer
-    
+    _width          as unsigned integer
+    _height         as unsigned integer
+    _buffer         as unsigned integer ptr
+    _bufferSize     as unsigned integer
+    _isShared       as unsigned integer
+    _bufferHandle   as unsigned integer
     OnSizeChanged as any ptr
     declare constructor()
     declare destructor()
@@ -65,6 +66,8 @@ TYPE GImage extends TObject
 	declare static Function LoadFromRaw(path as unsigned byte ptr,_w as unsigned integer,_h as unsigned integer) as GImage ptr
     declare static Function LoadFromBitmap(path as unsigned byte ptr) as GImage ptr
     declare static Function LoadFromBitmapBuffer(buffer as unsigned byte ptr,fsize as unsigned integer) as GImage ptr
+    
+    declare sub Share()
 end type
 
 

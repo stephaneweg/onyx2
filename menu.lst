@@ -9,6 +9,7 @@ title Onyx - Desktop
 	module /sys/fatfs.bin HDA1 SYS:
 	module /sys/init.bin
 	module /sys/stdio.bin
+	module /sys/ne2000.bin
 	
 title Onyx - CLI
 	root (hd0,0)
@@ -19,3 +20,4 @@ title Onyx - CLI
 	module /sys/fatfs.bin HDA1 SYS:
 	module /sys/init.bin
 	module /sys/stdio.bin
+	module /sys/ne2000.bin

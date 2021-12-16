@@ -17,7 +17,7 @@ Sub ConsoleWrite(s As Unsigned Byte Ptr)
     End Asm
 End Sub
 
-Sub ConsoleWriteLIne(s As Unsigned Byte Ptr)
+Sub ConsoleWriteLine(s As Unsigned Byte Ptr)
     Asm
         mov eax,&h2
         mov ebx,[s]

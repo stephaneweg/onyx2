@@ -27,6 +27,7 @@
 #include once "ipc/mutex.bi"
 #include once "ipc/messaging.bi"
 #include once "ipc/irq_event.bi"
+#include once "ipc/shared_buffer.bi"
 
 declare sub PARSE_CMDLINE(cmdline as unsigned byte ptr)
 declare sub PARSE_CMD_ARG(arg as unsigned byte ptr)
@@ -140,7 +141,7 @@ end sub
 sub KERNEL_ERROR(message as unsigned byte ptr,code as unsigned integer) 
     asm cli
     VMM_EXIT()
-    CONSOLE_MEM = cptr(any ptr,&hB8000)
+	ConsoleSetMem( cptr(any ptr,&hB8000))
     VesaResetScreen()
     
     ConsoleSetBackGround(4)
@@ -182,3 +183,4 @@ end sub
 #include once "ipc/mutex.bas"
 #include once "ipc/messaging.bas"
 #include once "ipc/irq_event.bas"
+#include once "ipc/shared_buffer.bas"

@@ -4,9 +4,10 @@ constructor GImage()
     this._parent = 0
     dim w as unsigned integer
     dim h as unsigned integer
-    var buff = GDIGetBuffer(0,@w,@h)
-    if (buff<>0) then
-        this._buffer = buff
+    var buffHandle = GDIGetBuffer(0,@w,@h)
+    if (buffHandle<>0) then
+        this._bufferHandle = buffHandle
+        this._buffer = MapSharedBuffer(buffHandle)
         this._width = w
         this._height = h
         this._bufferSize = w*h*4
@@ -21,11 +22,14 @@ constructor GImage(parent as unsigned integer,x as unsigned integer,y as unsigne
     this._width  = 0
     this._height = 0
     this._buffer = 0
-    this._bufferSize = 0
+    this._bufferSize    = 0
+    this._bufferHandle  = 0
     if (this._handle<>0) then
-        var buff = GDIGetBuffer(this._handle,@w,@h)
-        if (buff<>0) then
-            this._buffer = buff
+        var buffHandle = GDIGetBuffer(this._handle,@w,@h)
+        if (buffHandle<>0) then
+            dim v as unsigned integer ptr = MapSharedBuffer(buffHandle)
+            this._bufferHandle  = buffHandle
+            this._buffer        = v
             this._width = w
             this._height = h
             this._bufferSize = w*h*4
@@ -37,7 +41,9 @@ end constructor
 
 destructor GImage()
     if (this._buffer<>0) then
-        UnMapBuffer(this._buffer,this._bufferSize)
+        if (this._bufferHandle<>0) then
+            UnmapSharedBuffer(this._bufferHandle)
+        end if
         this._buffer = 0
         this._bufferSize = 0
     end if
@@ -162,13 +168,13 @@ sub GImage.Clear(c as unsigned integer)
 end sub
 
 sub GImage.SetPixel(_x as integer,_y as integer,c as unsigned integer)
-    if (_x>=0 and _y>=0 and _x<this._width and _y<this._height) then
+    if (this._buffer<>0 and _x>=0 and _y>=0 and _x<this._width and _y<this._height) then
         this._buffer[_y*this._width+_x] = c
     end if
 end sub
 
 sub GImage.DrawLine(x1 as integer,y1 as integer,x2 as integer,y2 as integer,c as unsigned integer)
-    	
+    if (this._buffer = 0) then return
         dim x as integer
         dim y as integer
         
@@ -289,6 +295,7 @@ sub GImage.DrawLine(x1 as integer,y1 as integer,x2 as integer,y2 as integer,c as
 end sub
 
 sub GImage.DrawRectangle(x1 as integer,y1 as integer,x2 as integer,y2 as integer, c as unsigned integer)
+    if (this._buffer = 0) then return
    DrawLine(x1,y1,x2,y1,c)
    DrawLine(x1,y1,x1,y2,c)
    DrawLine(x2,y1,x2,y2,c)
@@ -296,7 +303,7 @@ sub GImage.DrawRectangle(x1 as integer,y1 as integer,x2 as integer,y2 as integer
 end sub
 
 sub GImage.FillRectangleAlphaHalf(x1 as integer,y1 as integer,x2 as integer,y2 as integer,c as unsigned integer)
-      
+      if (this._buffer = 0) then return
         dim r as unsigned integer = (c and &hFF0000) shr 16
         dim g as unsigned integer = (c and &h00FF00) shr 8
         dim b as unsigned integer = (c and &h0000FF)
@@ -317,6 +324,7 @@ sub GImage.FillRectangleAlphaHalf(x1 as integer,y1 as integer,x2 as integer,y2 a
 end sub
 
 sub GImage.FillRectangleAlpha(x1 as integer,y1 as integer,x2 as integer,y2 as integer, c as unsigned integer)
+    if (this._buffer = 0) then return
     dim sx1 as integer
     dim sy1 as integer
     dim sw as integer
@@ -415,6 +423,7 @@ sub GImage.FillRectangleAlpha(x1 as integer,y1 as integer,x2 as integer,y2 as in
 end sub
 
 sub GImage.FillRectangle(x1 as integer,y1 as integer,x2 as integer,y2 as integer, c as unsigned integer)
+    if (this._buffer = 0) then return
     dim sx1 as integer
     dim sy1 as integer
     dim sw as integer
@@ -490,7 +499,7 @@ sub GImage.FillRectangle(x1 as integer,y1 as integer,x2 as integer,y2 as integer
 end sub
 
 sub GImage.PutOtherRaw(src as unsigned integer ptr,_w as integer,_h as integer,x as integer,y as integer)
-
+    if (this._buffer = 0) then return
     dim sx1 as integer
     dim sy1 as integer
     dim sw as integer
@@ -582,6 +591,8 @@ sub GImage.PutOtherRaw(src as unsigned integer ptr,_w as integer,_h as integer,x
     end asm
 end sub
 sub GImage.PutOther(src as GImage ptr,x as integer,y as integer,transparent as integer)
+    if (this._buffer = 0) then return
+    if (src->_buffer = 0) then return
     dim sx1 as integer
     dim sy1 as integer
     dim sw as integer
@@ -739,6 +750,8 @@ end sub
 
 
 sub GImage.PutOtherPart(src as GImage ptr,x as integer,y as integer,sourceX as integer,sourceY as integer,sourceWidth as integer,sourceHeight as integer, transparent as integer)
+    if (this._buffer = 0) then return
+    if (src->_buffer = 0) then return
     dim sx1 as integer
     dim sy1 as integer
     dim sw as integer
@@ -878,6 +891,7 @@ sub GImage.PutOtherPart(src as GImage ptr,x as integer,y as integer,sourceX as i
 end sub
 
 sub GImage.DrawTextMultiLine(s as unsigned byte ptr,x1 as integer,y1 as integer,c as integer,fdata as FontData ptr,ratio as integer,w as integer,textAlign as HorizontalAlignment)
+    if (this._buffer = 0) then return
     if (fdata=0) then exit sub
     if (s=0) then exit sub
     
@@ -951,6 +965,7 @@ sub GImage.DrawTextMultiLine(s as unsigned byte ptr,x1 as integer,y1 as integer,
 end sub
 
 sub GImage.DrawText(txt as unsigned byte ptr,x1 as integer,y1 as integer,c as integer,fdata as FontData ptr,ratio as integer)
+    if (this._buffer = 0) then return
     if (fdata=0) then exit sub
     if (txt=0) then exit sub
     dim tlen as integer
@@ -999,6 +1014,7 @@ end sub
 
 
 sub GImage.DrawChar(asciicode as unsigned byte,x1 as integer,y1 as integer,c as integer,fdata as FontData ptr,ratio as integer)
+    if (this._buffer = 0) then return
     if (fdata=0) then exit sub
     if (c=0) then exit sub
     

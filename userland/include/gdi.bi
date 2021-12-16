@@ -16,7 +16,7 @@ declare sub GDISetForegroundColor(g as unsigned integer,c as unsigned integer)
 declare sub GDISetPosition(_gd as unsigned integer,x as integer,y as integer)
 declare sub GDISetTransparent(_gdi as unsigned integer,transparent as unsigned integer)
 declare sub GDISetVisible(_gdi as unsigned integer,visible as unsigned integer)
-declare function GDIGetBuffer(_gdi as unsigned integer,w as unsigned integer ptr,h as unsigned integer ptr) as unsigned integer ptr
+declare function GDIGetBuffer(_gdi as unsigned integer,w as unsigned integer ptr,h as unsigned integer ptr) as unsigned integer
 
 
 declare sub GDIButtonSetSkin(_btn as unsigned integer,skin as unsigned byte ptr)

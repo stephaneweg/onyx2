@@ -1,5 +1,6 @@
 #include once "vmm.bi"
 #include once "kernel.bi"
+#include once "console.bi"
 
 
 #define PAGE_SIZE 4096
@@ -11,6 +12,8 @@
 
 sub VMM_INIT()
     ConsoleWrite(@"Initializing Virtual Memory Management")
+	var consoleMem = ConsoleGetMem()
+	
     paging_active = 0
     kernel_context.p_dir = PMM_ALLOCPAGE()
     memset32(kernel_context.p_dir,0,PAGE_SIZE_DWORD)
@@ -24,7 +27,7 @@ sub VMM_INIT()
     
   
     'map text video memory
-    kernel_context.map_page(CONSOLE_MEM,CONSOLE_MEM, VMM_FLAGS_USER_DATA)
+    kernel_context.map_page(consoleMem,consoleMem, VMM_FLAGS_USER_DATA)
 	
 	'map the page tables 
     kernel_context.v_dir = cptr(uinteger ptr, (VMM_PAGETABLES_VIRT_START shr 22)*4096*1024 + (VMM_PAGETABLES_VIRT_START shr 22)*4096)

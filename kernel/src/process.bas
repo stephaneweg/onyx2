@@ -32,6 +32,7 @@ end constructor
 
 
 destructor Process()
+	Shared_buffer.RemoveLinks(@this)
     if (AddressSpace<>0) then
         AddressSpace->Destructor()
         KFree(AddressSpace)

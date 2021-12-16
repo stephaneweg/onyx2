@@ -18,11 +18,5 @@ declare sub ConsolePrintOK()
 declare sub ConsolePrintFAIL()
 declare sub ConsolePutChar (c as byte)
 declare sub ConsoleDrawTitle()
-dim shared CONSOLE_MEM     as unsigned byte ptr
-dim shared consoleWidth         as integer
-dim shared consoleHeight        as integer
-dim shared consoleCursorX       as integer
-dim shared consoleCursorY       as integer
-dim shared consoleLineOffset    as integer
-dim shared consoleBackground    as unsigned byte
-dim shared consoleForeground    as unsigned byte
+declare function ConsoleGetMem() as unsigned byte ptr
+declare sub ConsoleSetMem(_newaddr as unsigned byte ptr)

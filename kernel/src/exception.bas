@@ -1,3 +1,4 @@
+#include once "console.bi"
 function PanicException(msg as unsigned byte ptr,stack as IRQ_Stack ptr) as IRQ_Stack ptr
     'if ( Scheduler.CurrentRuningThread<>0) then
     '    var pc = Scheduler.CurrentRuningThread->Owner
@@ -14,7 +15,7 @@ function PanicException(msg as unsigned byte ptr,stack as IRQ_Stack ptr) as IRQ_
     
     VMM_EXIT()
     VesaResetScreen()
-    CONSOLE_MEM = cptr(any ptr,&hB8000)
+	ConsoleSetMem( cptr(any ptr,&hB8000))
     stack=current_context->Resolve(stack)
     var th =SCheduler.CurrentRuningThread' cptr(Thread ptr,current_context->Resolve(SCheduler.CurrentRuningThread))
     ConsoleWriteLine(msg)
@@ -77,7 +78,7 @@ function ExceptionHandler(stack as IRQ_STACK ptr) as IRQ_STACK ptr
                 end asm
                 VMM_EXIT()
                 VesaResetScreen()
-                CONSOLE_MEM = cptr(any ptr,&hB8000)
+				ConsoleSetMem( cptr(any ptr,&hB8000))
                 ConsoleSetBackGround(4)
                 ConsoleSetForeground(15)
                 ConsoleClear()

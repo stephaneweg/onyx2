@@ -3,6 +3,8 @@ constructor GImage()
     this._height = 0
     this._buffer = 0
     this._bufferSize = 0
+    this._isShared = 0
+    this._bufferHandle = 0
     
     this.Destruct = @GImageDestroy
     this.OnSizeChanged = 0
@@ -11,10 +13,18 @@ end constructor
 
 destructor GImage()
     if (this._buffer<>0) then
-        Free(this._buffer)
+        if (this._isShared = 1 and this._bufferHandle<>0) then
+            DeleteSharedBuffer(this._bufferHandle)
+            this._isShared      = 0
+            this._bufferHandle  = 0
+        else
+            Free(this._buffer)
+        end if
         this._buffer = 0
         this._bufferSize=0
     end if
+    this._isShared = 0
+    this._bufferHandle = 0
     this._width = 0
     this._height = 0
 end destructor
@@ -131,7 +141,32 @@ end sub
 
 
 sub GImage.CreateBuffer()
-
+    if (this._isShared = 1 ) then
+        var newSize =  (this._width*this._height*4)
+        var newPage = newSize shr 12
+        if (newSize mod 4096)>0 then newPage+=1
+        
+        var oldSize =this._bufferSize*4
+        var oldPage = oldSize shr 12
+        if (oldSize mod 4096)>0 then oldPage+=1
+        
+        if (newPage>oldPage) then
+            if (this._bufferHandle<>0) then
+                DeleteSharedBuffer(this._bufferHandle)
+                this._bufferHandle=0
+            end if
+            
+            dim virt as any ptr = 0
+            dim handle as unsigned integer = CreateSharedBuffer(newPage,@virt)
+            if (handle<>0 and virt<>0) then  
+                this._buffer        = virt
+                this._bufferHandle  = handle
+                this._isShared      = 1
+            end if
+        end if
+        
+        return
+    end if
 	dim newsize as unsigned integer = this._width*this._height
 	if (newsize>this._bufferSize) then
 		if (this._buffer<>0) then
@@ -147,6 +182,29 @@ sub GImage.CreateBuffer()
 	end if
 end sub
 
+sub GImage.Share()
+    Mutex_Lock(GUI_LOCK)
+    if (this._isShared = 0) and (this._bufferSize>0) then
+        var sizeInBytes = this._bufferSize*4
+        var pages = sizeInBytes shr 12
+        if (sizeInBytes mod 4096)>0 then pages+=1
+        dim virt as any ptr = 0
+        dim handle as unsigned integer = CreateSharedBuffer(pages,@virt)
+        if (handle<>0 and virt<>0) then    
+            var b = this._buffer
+            
+            this._buffer        = virt
+            this._bufferHandle  = handle
+            this._isShared      = 1
+           
+            if (b<>0) then
+                Free(b)
+            end if
+        end if
+        
+    end if
+    Mutex_UnLock(GUI_LOCK)
+end sub
 
 sub GImage.Clear(c as unsigned integer)
     if (this._buffer<>0) then

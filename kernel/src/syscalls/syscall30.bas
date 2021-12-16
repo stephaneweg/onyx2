@@ -286,8 +286,58 @@ function SysCall30Handler(stack as IRQ_Stack ptr) as IRQ_Stack ptr
 			next i
 			
 		
-        
-            
+		case &h25 'Create shared buffer
+			dim buffer as SHARED_BUFFER ptr = KAlloc(sizeof(SHARED_BUFFER))
+			buffer->constructor(CurrentThread->Owner,stack->ECX)
+			var link = buffer->CreateLink(CurrentThread->Owner)
+			if (link = 0) then
+				buffer->Destructor()
+				KFREE(buffer)
+				stack->EAX = 0
+				stack->EBX = 0
+			else
+				stack->EAX = cuint(buffer)
+				stack->EBX = cuint(link->VirtualAddress)
+			end if
+			
+		case &h26 'Link shared buffer
+			stack->EAX = 0
+			if (SlabMeta.IsValidAddr(cptr(any ptr,stack->ebx))=1) then
+				dim buffer as SHARED_BUFFER ptr =cptr(SHARED_BUFFER ptr,stack->EBX)
+				var link = buffer->CreateLink(CurrentThread->Owner)
+				if (link<>0) then
+					stack->EAX = cuint(link->VirtualAddress)
+				end if
+            end if
+			
+		case &h27 'unlink shared buffer
+			stack->EAX = 0
+			if (SlabMeta.IsValidAddr(cptr(any ptr,stack->ebx))=1) then
+				dim buffer as SHARED_BUFFER ptr =cptr(SHARED_BUFFER ptr,stack->EBX)
+				if (buffer->Magic = SHARED_BUFFER_MAGIC) then
+					if (buffer->RemoveLink(CurrentThread->Owner)=1) then						
+						stack->EAX = 1
+						if (buffer->FirstLink=0) then
+							buffer->Destructor()
+							KFREE(buffer)
+						end if
+					end if
+				end if
+            end if
+			
+		case &h28 'delete shared buffer
+			stack->EAX = 0
+			if (SlabMeta.IsValidAddr(cptr(any ptr,stack->ebx))=1) then
+				dim buffer as SHARED_BUFFER ptr =cptr(SHARED_BUFFER ptr,stack->EBX)
+				if (buffer->Magic = SHARED_BUFFER_MAGIC) then
+					if (buffer->Owner =CurrentThread->Owner) then
+						buffer->destructor()
+						KFREE(buffer)
+						stack->EAX = 1
+					end if
+				end if
+            end if
+			
         case &h30 'page alloc
             stack->EAX = 0
             if (CurrentThread<>0) then

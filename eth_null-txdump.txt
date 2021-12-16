@@ -1,0 +1,9 @@
+null packetmover readable log file
+net IF = xl0
+MAC address = fe:fd:de:ad:be:ef
+--
+a packet from guest to host, length 46
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+00 00 00 00 00 00 00 00 9b 80 55 b4 00 1b        ..........U...
+--

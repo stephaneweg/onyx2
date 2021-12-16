@@ -341,6 +341,45 @@ sub UnMapBuffer(addr as any ptr,size as unsigned integer)
     end asm
 end sub
 
+function CreateSharedBuffer(pagesCount as unsigned integer,virtAddress as any ptr ptr) as unsigned integer
+    dim virt as unsigned integer
+    dim handle as unsigned integer
+    asm
+        mov eax,&h25
+        mov ecx,[pagesCount]
+        int 0x30
+        mov [handle],eax
+        mov [virt],ebx
+    end asm
+    *virtAddress=cptr(any ptr,virt)
+    return handle
+end function
+
+function MapSharedBuffer(handle as unsigned integer) as any ptr
+    asm
+        mov eax,&h26
+        mov ebx,[handle]
+        int 0x30
+        mov [function],eax
+    end asm
+end function
+
+sub UnmapSharedBuffer(handle as unsigned integer)
+    asm
+        mov eax,&h27
+        mov ebx,[handle]
+        int 0x30
+    end asm
+end sub
+
+sub DeleteSharedBuffer(handle as unsigned integer)
+    asm
+        mov eax,&h28
+        mov ebx,[handle]
+        int 0x30
+    end asm
+end sub
+    
 '---------------------------------------
 ' memory management
 '--------------------------------------
